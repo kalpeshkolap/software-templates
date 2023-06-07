@@ -1,26 +1,26 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: python-app-template
-  title: Python App Template
-  description: Create a python application
+  name: python-template
+  title: Python Template
+  description: Create a website powered with Next.js
   tags:
     - python
     - test
 spec:
   owner: web@example.com
-  type: application
+  type: website
   parameters:
     - title: Provide some simple information
       required:
         - component_id
-        - description
         - owner
       properties:
         component_id:
           title: Name
           type: string
           description: Unique name of the component
+          ui:field: EntityNamePicker
         description:
           title: Description
           type: string
@@ -50,6 +50,8 @@ spec:
       action: fetch:template
       input:
         url: ./skeleton
+        copyWithoutRender:
+          - .github/workflows/*
         values:
           component_id: ${{ parameters.component_id }}
           description: ${{ parameters.description }}
@@ -58,11 +60,11 @@ spec:
 
     - id: publish
       name: Publish
-      action: publish:azure
+      action: publish:github
       input:
+        allowedHosts: ["github.com"]
         description: This is ${{ parameters.component_id }}
         repoUrl: ${{ parameters.repoUrl }}
-        defaultBranch: main
 
     - id: register
       name: Register
@@ -72,5 +74,9 @@ spec:
         catalogInfoPath: "/catalog-info.yaml"
 
   output:
-    remoteUrl: ${{ steps.publish.output.remoteUrl }}
-    entityRef: ${{ steps.register.output.entityRef }}
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}
