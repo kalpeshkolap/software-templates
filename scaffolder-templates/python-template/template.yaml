@@ -43,7 +43,7 @@ spec:
           ui:field: RepoUrlPicker
           ui:options:
             allowedHosts:
-              - dev.azure.com
+              - github.com
   steps:
     - id: template
       name: Fetch Skeleton + Template
